@@ -59,6 +59,12 @@
         <nav class="mb-6">
             <div class="flex flex-col gap-4">
                 <?php $__currentLoopData = $menuGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $gi => $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                
+                <?php if(!empty($group['superadmin']) && (!auth()->check() || !auth()->user()->isSuperAdmin())): ?>
+                    <?php continue; ?>
+                <?php endif; ?>
+
                 <div>
                     
                     <h2 class="mb-4 flex text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-500"
@@ -94,12 +100,15 @@
 
                                 
                                 <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                                      class="flex-1 whitespace-nowrap overflow-hidden">
+                                      class="flex-1 whitespace-nowrap overflow-hidden text-left">
                                     <?php echo e($item['name']); ?>
 
                                 </span>
+
+                                
                                 <?php if(!empty($item['new'])): ?>
-                                <span class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
+                                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                      class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                     New
                                 </span>
                                 <?php endif; ?>
@@ -159,8 +168,10 @@
                                     <?php echo e($item['name']); ?>
 
                                 </span>
+
                                 <?php if(!empty($item['new'])): ?>
-                                <span class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
+                                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                      class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                     New
                                 </span>
                                 <?php endif; ?>

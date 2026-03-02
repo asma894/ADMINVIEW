@@ -84,6 +84,22 @@ class MenuHelper
                 ],
             ],
 
+            // ── MANAGEMENT (superadmin only — blade checks auth) ───────────
+            [
+                'title'       => 'Management',
+                'superadmin'  => true,
+                'items'       => [
+                    [
+                        'icon'     => 'users-manage',
+                        'name'     => 'User Management',
+                        'subItems' => [
+                            ['name' => 'Users',            'path' => '/users'],
+                            ['name' => 'Admin Management', 'path' => '/admin-management'],
+                        ],
+                    ],
+                ],
+            ],
+
             // ── SUPPORT ────────────────────────────────────────────────────
             [
                 'title' => 'Support',
@@ -168,6 +184,8 @@ class MenuHelper
             'chart-bar' => '<svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.66667 15.8333C1.66667 16.2936 2.03976 16.6667 2.5 16.6667H17.5C17.9602 16.6667 18.3333 16.2936 18.3333 15.8333C18.3333 15.3731 17.9602 15 17.5 15H16.6667V8.33333C16.6667 7.8731 16.2936 7.5 15.8333 7.5H13.3333C12.8731 7.5 12.5 7.8731 12.5 8.33333V15H10.8333V5C10.8333 4.53976 10.4602 4.16667 10 4.16667H7.5C7.03976 4.16667 6.66667 4.53976 6.66667 5V15H5V10C5 9.53976 4.6269 9.16667 4.16667 9.16667H2.5C2.03976 9.16667 1.66667 9.53976 1.66667 10V15H1.66667V15.8333Z"/></svg>',
             'component' => '<svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 1.66667L13.3333 7.5H6.66667L10 1.66667ZM2.91667 10.4167C2.91667 8.57578 4.40905 7.08333 6.25 7.08333C8.09095 7.08333 9.58333 8.57578 9.58333 10.4167C9.58333 12.2576 8.09095 13.75 6.25 13.75C4.40905 13.75 2.91667 12.2576 2.91667 10.4167ZM11.25 9.16667H18.3333V17.0833H11.25V9.16667Z"/></svg>',
             'user' => '<svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2.5C8.15905 2.5 6.66667 3.99238 6.66667 5.83333C6.66667 7.67428 8.15905 9.16667 10 9.16667C11.8409 9.16667 13.3333 7.67428 13.3333 5.83333C13.3333 3.99238 11.8409 2.5 10 2.5ZM3.33333 17.5C3.33333 14.2783 5.94533 11.6667 9.16667 11.6667H10.8333C14.0547 11.6667 16.6667 14.2783 16.6667 17.5C16.6667 17.9602 16.2936 18.3333 15.8333 18.3333C15.3731 18.3333 15 17.9602 15 17.5C15 15.1988 13.1345 13.3333 10.8333 13.3333H9.16667C6.86548 13.3333 5 15.1988 5 17.5C5 17.9602 4.6269 18.3333 4.16667 18.3333C3.70643 18.3333 3.33333 17.9602 3.33333 17.5Z"/></svg>',
+            // New icon for user management group
+            'users-manage' => '<svg class="fill-current" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
         ];
 
         return $icons[$icon] ?? '<svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -18,19 +19,30 @@ class RegisteredUserController extends Controller
         $request->validate([
             'fname'    => ['required', 'string', 'max:255'],
             'lname'    => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name'     => $request->fname . ' ' . $request->lname,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
+            'name'            => $request->fname . ' ' . $request->lname,
+            'email'           => $request->email,
+            'password'        => Hash::make($request->password),
+            'role'            => 'user',
+            'status'          => 'inactive',
+            'approval_status' => 'pending',
         ]);
 
         event(new Registered($user));
+
+        // Notify superadmins via the notifications table
+        AdminNotification::create([
+            'triggered_by' => $user->id,
+            'type'         => 'new_signup',
+            'message'      => "{$user->name} ({$user->email}) signed up and is awaiting approval.",
+        ]);
+
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('pending-approval');
     }
 }

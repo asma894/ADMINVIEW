@@ -59,6 +59,12 @@
         <nav class="mb-6">
             <div class="flex flex-col gap-4">
                 @foreach ($menuGroups as $gi => $group)
+
+                {{-- Skip superadmin-only groups for non-superadmins --}}
+                @if(!empty($group['superadmin']) && (!auth()->check() || !auth()->user()->isSuperAdmin()))
+                    @continue
+                @endif
+
                 <div>
                     {{-- Group title --}}
                     <h2 class="mb-4 flex text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-500"
@@ -91,13 +97,16 @@
                                     {!! MenuHelper::getIconSvg($item['icon']) !!}
                                 </span>
 
-                                {{-- label + badges --}}
+                                {{-- label --}}
                                 <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                                      class="flex-1 whitespace-nowrap overflow-hidden">
+                                      class="flex-1 whitespace-nowrap overflow-hidden text-left">
                                     {{ $item['name'] }}
                                 </span>
+
+                                {{-- NEW badge --}}
                                 @if(!empty($item['new']))
-                                <span class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
+                                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                      class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                     New
                                 </span>
                                 @endif
@@ -154,8 +163,10 @@
                                       class="flex-1 whitespace-nowrap overflow-hidden">
                                     {{ $item['name'] }}
                                 </span>
+
                                 @if(!empty($item['new']))
-                                <span class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
+                                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                      class="inline-flex items-center rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                     New
                                 </span>
                                 @endif

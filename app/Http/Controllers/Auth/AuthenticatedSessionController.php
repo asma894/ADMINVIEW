@@ -11,34 +11,37 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Show the sign-in page (your custom TailAdmin view).
-     */
     public function create(): View
     {
         return view('pages.auth.signin', ['title' => 'Sign In']);
     }
 
-    /**
-     * Handle login form submission.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
         $request->session()->regenerate();
 
+        $user = auth()->user();
+
+        if ($user->approval_status === 'pending') {
+            return redirect()->route('pending-approval');
+        }
+
+        if ($user->approval_status !== 'approved' || $user->status !== 'active') {
+            Auth::logout();
+            $request->session()->invalidate();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Your account has been deactivated. Please contact support.']);
+        }
+
         return redirect()->intended(route('dashboard'));
     }
 
-    /**
-     * Log the user out.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('login');
     }
 }

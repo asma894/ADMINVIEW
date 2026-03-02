@@ -5,26 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile page.
-     */
     public function edit(Request $request): View
     {
-        return view('pages.profile', [
-            'user'  => $request->user(),
-            'title' => 'Profile',
-        ]);
+        return view('pages.profile', ['user' => $request->user(), 'title' => 'Profile']);
     }
 
-    /**
-     * Update profile info: name, email, phone, bio + optional avatar.
-     */
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
@@ -32,20 +22,16 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'fname'  => ['required', 'string', 'max:100'],
             'lname'  => ['required', 'string', 'max:100'],
-            'email'  => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email'  => ['required', 'email', 'unique:users,email,' . $user->id],
             'phone'  => ['nullable', 'string', 'max:30'],
             'bio'    => ['nullable', 'string', 'max:255'],
             'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        // Handle avatar upload
+        $avatarPath = $user->avatar;
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
-        } else {
-            unset($validated['avatar']); // don't overwrite with null
+            if ($avatarPath) Storage::disk('public')->delete($avatarPath);
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user->update([
@@ -53,7 +39,7 @@ class ProfileController extends Controller
             'email'  => $validated['email'],
             'phone'  => $validated['phone'] ?? null,
             'bio'    => $validated['bio'] ?? null,
-            'avatar' => $validated['avatar'] ?? $user->avatar,
+            'avatar' => $avatarPath,
         ]);
 
         if ($user->wasChanged('email')) {
@@ -64,22 +50,14 @@ class ProfileController extends Controller
         return back()->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
+        $request->validateWithBag('userDeletion', ['password' => ['required', 'current_password']]);
         $user = $request->user();
         Auth::logout();
         $user->delete();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return Redirect::to('/signin');
+        return redirect()->to('/signin');
     }
 }
